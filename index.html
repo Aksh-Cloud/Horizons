@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HORIZONS</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root { --c: #00f2ff; --m: #ff0055; --p: #bc13fe; --bg: #010103; }
+        * { box-sizing: border-box; cursor: crosshair; }
+        body { background: var(--bg); color: var(--c); font-family: 'JetBrains Mono', monospace; height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+
+        /* MULTI-LAYERED ANIMATED BACKGROUND */
+        .bg-layer { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        .grid { background-image: linear-gradient(var(--p) 1px, transparent 1px), linear-gradient(90deg, var(--p) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.05; transform: perspective(500px) rotateX(60deg); }
+        
+        /* THE MAIN FRAME */
+        .frame { width: 800px; height: 500px; background: rgba(0, 0, 0, 0.95); border: 1px solid var(--c); display: grid; grid-template-columns: 250px 1fr; position: relative; box-shadow: 0 0 50px rgba(0,242,255,0.1); border-radius: 2px; }
+        .frame::before { content: ""; position: absolute; inset: -5px; border: 1px solid var(--m); opacity: 0.3; pointer-events: none; }
+
+        /* SIDEBAR / LOGS */
+        .sidebar { border-right: 1px solid var(--c); padding: 15px; display: flex; flex-direction: column; font-size: 9px; overflow: hidden; background: rgba(188, 19, 254, 0.02); }
+        .log-line { margin-bottom: 5px; color: var(--p); white-space: nowrap; animation: type 2s steps(40) infinite; }
+        @keyframes type { from { width: 0; } to { width: 100%; } }
+
+        /* MAIN TERMINAL */
+        .main { padding: 30px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .glitch-title { font-family: 'Orbitron'; font-size: 3.5rem; font-weight: 900; letter-spacing: 10px; color: #fff; text-shadow: 3px 0 var(--m), -3px 0 var(--c); animation: shake 0.1s infinite; text-align: center; }
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(0); } }
+
+        /* DATA BLOCKS */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .block { border: 1px solid rgba(0, 242, 255, 0.2); padding: 10px; background: rgba(0,0,0,0.5); font-size: 11px; }
+        .val { font-size: 18px; color: #fff; display: block; margin-top: 5px; text-shadow: 0 0 10px var(--c); }
+
+        /* ACTIONS */
+        .actions { display: flex; flex-direction: column; gap: 10px; }
+        .btn { padding: 12px; border: 1px solid var(--c); background: transparent; color: var(--c); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; transition: 0.2s; text-decoration: none; text-align: center; }
+        .btn:hover { background: var(--c); color: #000; box-shadow: 0 0 20px var(--c); }
+        .btn.red { border-color: var(--m); color: var(--m); }
+        .btn.red:hover { background: var(--m); color: #fff; box-shadow: 0 0 20px var(--m); }
+
+        /* OVERLAYS */
+        .scanlines { position: absolute; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); background-size: 100% 4px; pointer-events: none; }
+        .vignette { position: absolute; inset: 0; background: radial-gradient(circle, transparent 50%, black 150%); pointer-events: none; }
+        
+        /* PLAYER AVATARS */
+        #p-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+        .head { width: 24px; height: 24px; border: 1px solid var(--c); }
+    </style>
+</head>
+<body>
+
+<div class="bg-layer grid"></div>
+<div class="bg-layer" style="background: radial-gradient(circle at center, #100020 0%, transparent 70%);"></div>
+
+<div class="frame">
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <div class="sidebar" id="logs">
+        <div class="log-line">> INITIALIZING_KERNAL...</div>
+        <div class="log-line">> LOADING_HORIZONS_V9.4...</div>
+        <div class="log-line">> SCANNING_INDIAN_NODES...</div>
+        <div class="log-line">> BYPASSING_FIREWALLS...</div>
+    </div>
+
+    <div class="main">
+        <div>
+            <div class="glitch-title">HORIZONS</div>
+            <div style="text-align:center; font-size: 9px; letter-spacing: 5px; opacity: 0.6;">ENCRYPTED ACCESS ONLY</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="block">UPLINK_STATUS <span class="val" id="st">READY</span></div>
+            <div class="block">ACTIVE_PORT <span class="val" id="pt">----</span></div>
+            <div class="block">POPULATION <span class="val" id="pl">0/0</span></div>
+            <div class="block">LATENCY <span class="val">~24ms</span></div>
+        </div>
+
+        <div id="p-list"></div>
+
+        <div class="actions">
+            <button class="btn" onclick="deepScan()">INITIATE DEEP SCAN</button>
+            <button id="cp" class="btn" style="display:none" onclick="copy()">EXTRACT TLAUNCHER ADDR</button>
+            <a href="https://falixnodes.net" target="_blank" class="btn red">SYSTEM OVERRIDE: START</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let addr = "";
+    function addLog(msg) {
+        const l = document.getElementById('logs');
+        const d = document.createElement('div');
+        d.className = 'log-line';
+        d.innerText = `> ${msg}`;
+        l.prepend(d);
+    }
+
+    async function deepScan() {
+        addLog("REQUESTING_DATA_PACKETS...");
+        try {
+            const r = await fetch('https://mcsrvstat.us');
+            const d = await r.json();
+            if(d.online) {
+                addr = `horizons.falix.dev:${d.port}`;
+                document.getElementById('st').innerText = "STABLE";
+                document.getElementById('pt').innerText = d.port;
+                document.getElementById('pl').innerText = `${d.players.online}/${d.players.max}`;
+                document.getElementById('cp').style.display = "block";
+                addLog("SIGNAL_LOCKED_ON_PORT_" + d.port);
+                
+                const list = document.getElementById('p-list');
+                list.innerHTML = "";
+                if(d.players.list) {
+                    d.players.list.forEach(p => {
+                        list.innerHTML += `<img class="head" src="https://mc-heads.net{p.name}/24" title="${p.name}">`;
+                    });
+                }
+            } else {
+                addLog("NODE_OFFLINE_RETRYING...");
+                document.getElementById('st').innerText = "FAILED";
+            }
+        } catch(e) { addLog("CRITICAL_CONNECTION_ERROR"); }
+    }
+
+    function copy() {
+        navigator.clipboard.writeText(addr);
+        addLog("ADDR_SAVED_TO_CLIPBOARD");
+    }
+
+    // Passive log simulation
+    setInterval(() => addLog("PINGING_NODE_" + Math.floor(Math.random()*9999)), 5000);
+</script>
+
+</body>
+</html>
