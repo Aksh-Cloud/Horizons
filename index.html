@@ -2,135 +2,179 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>HORIZONS</title>
+    <title>Horizons // Infinite</title>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        :root { --c: #00f2ff; --m: #ff0055; --p: #bc13fe; --bg: #010103; }
-        * { box-sizing: border-box; cursor: crosshair; }
-        body { background: var(--bg); color: var(--c); font-family: 'JetBrains Mono', monospace; height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        :root {
+            --accent: #00f2ff;
+            --secondary: #7000ff;
+            --bg: #050508;
+        }
 
-        /* MULTI-LAYERED ANIMATED BACKGROUND */
-        .bg-layer { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-        .grid { background-image: linear-gradient(var(--p) 1px, transparent 1px), linear-gradient(90deg, var(--p) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.05; transform: perspective(500px) rotateX(60deg); }
-        
-        /* THE MAIN FRAME */
-        .frame { width: 800px; height: 500px; background: rgba(0, 0, 0, 0.95); border: 1px solid var(--c); display: grid; grid-template-columns: 250px 1fr; position: relative; box-shadow: 0 0 50px rgba(0,242,255,0.1); border-radius: 2px; }
-        .frame::before { content: ""; position: absolute; inset: -5px; border: 1px solid var(--m); opacity: 0.3; pointer-events: none; }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
-        /* SIDEBAR / LOGS */
-        .sidebar { border-right: 1px solid var(--c); padding: 15px; display: flex; flex-direction: column; font-size: 9px; overflow: hidden; background: rgba(188, 19, 254, 0.02); }
-        .log-line { margin-bottom: 5px; color: var(--p); white-space: nowrap; animation: type 2s steps(40) infinite; }
-        @keyframes type { from { width: 0; } to { width: 100%; } }
+        body {
+            margin: 0; background: var(--bg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: white; height: 100vh; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
 
-        /* MAIN TERMINAL */
-        .main { padding: 30px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
-        .glitch-title { font-family: 'Orbitron'; font-size: 3.5rem; font-weight: 900; letter-spacing: 10px; color: #fff; text-shadow: 3px 0 var(--m), -3px 0 var(--c); animation: shake 0.1s infinite; text-align: center; }
-        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(0); } }
+        /* Animated Mesh Gradient Background */
+        .mesh {
+            position: fixed; inset: 0; z-index: -1;
+            background: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            filter: blur(100px); opacity: 0.8;
+        }
 
-        /* DATA BLOCKS */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .block { border: 1px solid rgba(0, 242, 255, 0.2); padding: 10px; background: rgba(0,0,0,0.5); font-size: 11px; }
-        .val { font-size: 18px; color: #fff; display: block; margin-top: 5px; text-shadow: 0 0 10px var(--c); }
+        /* Floating Modern Card */
+        .glass-card {
+            width: 90%; max-width: 500px;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 40px;
+            backdrop-filter: blur(40px);
+            text-align: center;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            animation: fadeIn 1s ease-out;
+        }
 
-        /* ACTIONS */
-        .actions { display: flex; flex-direction: column; gap: 10px; }
-        .btn { padding: 12px; border: 1px solid var(--c); background: transparent; color: var(--c); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; transition: 0.2s; text-decoration: none; text-align: center; }
-        .btn:hover { background: var(--c); color: #000; box-shadow: 0 0 20px var(--c); }
-        .btn.red { border-color: var(--m); color: var(--m); }
-        .btn.red:hover { background: var(--m); color: #fff; box-shadow: 0 0 20px var(--m); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* OVERLAYS */
-        .scanlines { position: absolute; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); background-size: 100% 4px; pointer-events: none; }
-        .vignette { position: absolute; inset: 0; background: radial-gradient(circle, transparent 50%, black 150%); pointer-events: none; }
-        
-        /* PLAYER AVATARS */
-        #p-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-        .head { width: 24px; height: 24px; border: 1px solid var(--c); }
+        h1 {
+            font-size: 3.5rem; font-weight: 800; margin: 0;
+            letter-spacing: -2px; line-height: 1;
+            background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.3));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px; border-radius: 100px;
+            background: rgba(255,255,255,0.05);
+            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; margin-top: 20px; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .dot { width: 8px; height: 8px; background: #333; border-radius: 50%; transition: 0.5s; }
+        .dot.active { background: var(--accent); box-shadow: 0 0 15px var(--accent); }
+
+        .stat-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 40px 0;
+        }
+
+        .stat-box {
+            padding: 20px; border-radius: 24px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .label { font-size: 0.7rem; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .value { font-size: 1.4rem; font-weight: 800; color: #fff; }
+
+        /* Modern Buttons */
+        .btn {
+            width: 100%; padding: 18px; border-radius: 20px;
+            font-family: inherit; font-weight: 700; font-size: 1rem;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            border: none; margin-bottom: 12px; display: block; text-decoration: none;
+        }
+
+        .btn-main { background: #fff; color: #000; }
+        .btn-main:hover { transform: scale(1.02); box-shadow: 0 20px 40px rgba(255,255,255,0.15); }
+
+        .btn-sec { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-sec:hover { background: rgba(255,255,255,0.1); }
+
+        .btn-start { background: linear-gradient(90deg, var(--secondary), var(--accent)); color: #fff; }
+        .btn-start:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+        /* Floating Heads */
+        .heads-wrap { display: flex; justify-content: center; gap: -10px; margin-bottom: 20px; }
+        .head-img { 
+            width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--bg);
+            background: #222; margin-left: -8px; transition: 0.3s;
+        }
+        .head-img:hover { transform: translateY(-5px); z-index: 10; }
     </style>
 </head>
 <body>
 
-<div class="bg-layer grid"></div>
-<div class="bg-layer" style="background: radial-gradient(circle at center, #100020 0%, transparent 70%);"></div>
+<div class="mesh"></div>
 
-<div class="frame">
-    <div class="scanlines"></div>
-    <div class="vignette"></div>
-
-    <div class="sidebar" id="logs">
-        <div class="log-line">> INITIALIZING_KERNAL...</div>
-        <div class="log-line">> LOADING_HORIZONS_V9.4...</div>
-        <div class="log-line">> SCANNING_INDIAN_NODES...</div>
-        <div class="log-line">> BYPASSING_FIREWALLS...</div>
+<div class="glass-card">
+    <h1>Horizons</h1>
+    
+    <div class="status-pill">
+        <div id="dot" class="dot"></div>
+        <span id="status-text">Scanning...</span>
     </div>
 
-    <div class="main">
-        <div>
-            <div class="glitch-title">HORIZONS</div>
-            <div style="text-align:center; font-size: 9px; letter-spacing: 5px; opacity: 0.6;">ENCRYPTED ACCESS ONLY</div>
+    <div class="stat-grid">
+        <div class="stat-box">
+            <span class="label">Current Port</span>
+            <span class="value" id="port">----</span>
         </div>
-
-        <div class="stats-grid">
-            <div class="block">UPLINK_STATUS <span class="val" id="st">READY</span></div>
-            <div class="block">ACTIVE_PORT <span class="val" id="pt">----</span></div>
-            <div class="block">POPULATION <span class="val" id="pl">0/0</span></div>
-            <div class="block">LATENCY <span class="val">~24ms</span></div>
-        </div>
-
-        <div id="p-list"></div>
-
-        <div class="actions">
-            <button class="btn" onclick="deepScan()">INITIATE DEEP SCAN</button>
-            <button id="cp" class="btn" style="display:none" onclick="copy()">EXTRACT TLAUNCHER ADDR</button>
-            <a href="https://falixnodes.net" target="_blank" class="btn red">SYSTEM OVERRIDE: START</a>
+        <div class="stat-box">
+            <span class="label">Players</span>
+            <span class="value" id="players">0/0</span>
         </div>
     </div>
+
+    <div class="heads-wrap" id="heads"></div>
+
+    <button class="btn btn-main" onclick="fetchData()">Refresh Gateway</button>
+    <button class="btn btn-sec" id="copyBtn" style="display:none" onclick="copy()">Copy Connection String</button>
+    <a href="https://falixnodes.net" target="_blank" class="btn btn-start">Boot System</a>
 </div>
 
 <script>
-    let addr = "";
-    function addLog(msg) {
-        const l = document.getElementById('logs');
-        const d = document.createElement('div');
-        d.className = 'log-line';
-        d.innerText = `> ${msg}`;
-        l.prepend(d);
-    }
+    let addrStr = "";
 
-    async function deepScan() {
-        addLog("REQUESTING_DATA_PACKETS...");
+    async function fetchData() {
+        const statusText = document.getElementById('status-text');
+        const dot = document.getElementById('dot');
+        
         try {
-            const r = await fetch('https://mcsrvstat.us');
-            const d = await r.json();
-            if(d.online) {
-                addr = `horizons.falix.dev:${d.port}`;
-                document.getElementById('st').innerText = "STABLE";
-                document.getElementById('pt').innerText = d.port;
-                document.getElementById('pl').innerText = `${d.players.online}/${d.players.max}`;
-                document.getElementById('cp').style.display = "block";
-                addLog("SIGNAL_LOCKED_ON_PORT_" + d.port);
+            const res = await fetch('https://mcsrvstat.us');
+            const data = await res.json();
+
+            if(data.online) {
+                addrStr = `horizons.falix.dev:${data.port}`;
+                statusText.innerText = "Active Link";
+                dot.classList.add('active');
+                document.getElementById('port').innerText = data.port;
+                document.getElementById('players').innerText = `${data.players.online}/${data.players.max}`;
+                document.getElementById('copyBtn').style.display = "block";
                 
-                const list = document.getElementById('p-list');
-                list.innerHTML = "";
-                if(d.players.list) {
-                    d.players.list.forEach(p => {
-                        list.innerHTML += `<img class="head" src="https://mc-heads.net{p.name}/24" title="${p.name}">`;
+                const heads = document.getElementById('heads');
+                heads.innerHTML = "";
+                if(data.players.list) {
+                    data.players.list.slice(0, 5).forEach(p => {
+                        heads.innerHTML += `<img src="https://mc-heads.net{p.name}" class="head-img" title="${p.name}">`;
                     });
                 }
             } else {
-                addLog("NODE_OFFLINE_RETRYING...");
-                document.getElementById('st').innerText = "FAILED";
+                statusText.innerText = "Node Offline";
+                dot.classList.remove('active');
+                document.getElementById('copyBtn').style.display = "none";
             }
-        } catch(e) { addLog("CRITICAL_CONNECTION_ERROR"); }
+        } catch (e) {
+            statusText.innerText = "Connection Error";
+        }
     }
 
     function copy() {
-        navigator.clipboard.writeText(addr);
-        addLog("ADDR_SAVED_TO_CLIPBOARD");
+        navigator.clipboard.writeText(addrStr);
+        alert("Address copied for TLauncher!");
     }
 
-    // Passive log simulation
-    setInterval(() => addLog("PINGING_NODE_" + Math.floor(Math.random()*9999)), 5000);
+    // Run on load
+    fetchData();
 </script>
 
 </body>
