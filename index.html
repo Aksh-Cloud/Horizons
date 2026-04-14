@@ -1,181 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Horizons // Infinite</title>
-    <link href="https://googleapis.com" rel="stylesheet">
-    <style>
-        :root {
-            --accent: #00f2ff;
-            --secondary: #7000ff;
-            --bg: #050508;
-        }
-
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-
-        body {
-            margin: 0; background: var(--bg);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: white; height: 100vh; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* Animated Mesh Gradient Background */
-        .mesh {
-            position: fixed; inset: 0; z-index: -1;
-            background: 
-                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
-            filter: blur(100px); opacity: 0.8;
-        }
-
-        /* Floating Modern Card */
-        .glass-card {
-            width: 90%; max-width: 500px;
-            padding: 50px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 40px;
-            backdrop-filter: blur(40px);
-            text-align: center;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            animation: fadeIn 1s ease-out;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        h1 {
-            font-size: 3.5rem; font-weight: 800; margin: 0;
-            letter-spacing: -2px; line-height: 1;
-            background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.3));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
-        .status-pill {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 16px; border-radius: 100px;
-            background: rgba(255,255,255,0.05);
-            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 1px; margin-top: 20px; border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .dot { width: 8px; height: 8px; background: #333; border-radius: 50%; transition: 0.5s; }
-        .dot.active { background: var(--accent); box-shadow: 0 0 15px var(--accent); }
-
-        .stat-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 40px 0;
-        }
-
-        .stat-box {
-            padding: 20px; border-radius: 24px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .label { font-size: 0.7rem; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .value { font-size: 1.4rem; font-weight: 800; color: #fff; }
-
-        /* Modern Buttons */
-        .btn {
-            width: 100%; padding: 18px; border-radius: 20px;
-            font-family: inherit; font-weight: 700; font-size: 1rem;
-            cursor: pointer; transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
-            border: none; margin-bottom: 12px; display: block; text-decoration: none;
-        }
-
-        .btn-main { background: #fff; color: #000; }
-        .btn-main:hover { transform: scale(1.02); box-shadow: 0 20px 40px rgba(255,255,255,0.15); }
-
-        .btn-sec { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-sec:hover { background: rgba(255,255,255,0.1); }
-
-        .btn-start { background: linear-gradient(90deg, var(--secondary), var(--accent)); color: #fff; }
-        .btn-start:hover { filter: brightness(1.2); transform: translateY(-2px); }
-
-        /* Floating Heads */
-        .heads-wrap { display: flex; justify-content: center; gap: -10px; margin-bottom: 20px; }
-        .head-img { 
-            width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--bg);
-            background: #222; margin-left: -8px; transition: 0.3s;
-        }
-        .head-img:hover { transform: translateY(-5px); z-index: 10; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horizons — Server Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --bg2: #0b0f1a;
+    --bg3: #0f1628;
+    --bg4: #06090f;
+    --border: #1e2d4a;
+    --border2: #2a3a5c;
+    --border3: #3a6aaa;
+    --accent: #7ab3f5;
+    --green: #4ade80;
+    --red: #e24b4a;
+    --amber: #f0a500;
+    --purple: #c084fc;
+    --muted: #4a6a8a;
+    --text: #c0d4f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(122,179,245,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(122,179,245,0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none; z-index: 0;
+  }
+  .container { width: 100%; max-width: 560px; position: relative; z-index: 1; }
+  .corner { position: absolute; width: 16px; height: 16px; border-color: var(--border3); border-style: solid; opacity: 0.6; }
+  .corner.tl { top: -4px; left: -4px; border-width: 2px 0 0 2px; }
+  .corner.tr { top: -4px; right: -4px; border-width: 2px 2px 0 0; }
+  .corner.bl { bottom: -4px; left: -4px; border-width: 0 0 2px 2px; }
+  .corner.br { bottom: -4px; right: -4px; border-width: 0 2px 2px 0; }
+  .card { background: var(--bg2); border: 1.5px solid var(--border2); border-radius: 8px; overflow: hidden; }
+  .header { background: var(--bg3); border-bottom: 1.5px solid var(--border2); padding: 18px 22px; display: flex; align-items: center; gap: 14px; }
+  .logo { width: 42px; height: 42px; background: #1a2a4a; border: 1.5px solid var(--border3); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; animation: logopulse 3s ease-in-out infinite; }
+  @keyframes logopulse { 0%,100%{border-color:var(--border3)} 50%{border-color:var(--accent)} }
+  .logo-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 6px; }
+  .logo-block { width: 10px; height: 10px; border-radius: 1px; }
+  .lb-green { background: var(--green); }
+  .lb-wide { grid-column: span 2; background: var(--accent); height: 7px; }
+  .header-text { flex: 1; }
+  .server-title { font-family: 'Press Start 2P', monospace; font-size: 11px; color: var(--accent); letter-spacing: 1px; margin-bottom: 5px; }
+  .server-domain { font-size: 13px; color: var(--muted); }
+  .status-pill { font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 4px 12px; border-radius: 3px; border: 1px solid var(--border); color: var(--muted); background: var(--bg4); letter-spacing: 0.5px; transition: all 0.3s; white-space: nowrap; }
+  .status-pill.online  { border-color: var(--green); color: var(--green); background: #071a0f; }
+  .status-pill.offline { border-color: var(--red); color: var(--red); background: #1a0707; }
+  .status-pill.checking { border-color: var(--amber); color: var(--amber); background: #1a1200; animation: blink 0.8s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .body { padding: 20px 22px; }
+  .stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-bottom: 18px; }
+  .stat { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+  .stat-label { font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .stat-value { font-size: 15px; color: var(--accent); transition: color 0.3s; }
+  .addr-row { background: var(--bg4); border: 1px solid var(--border); border-radius: 6px; padding: 11px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .addr-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+  .addr-value { font-size: 15px; color: var(--green); flex: 1; word-break: break-all; transition: color 0.3s; }
+  .copy-btn { background: #1a2a3a; border: 1px solid var(--border3); color: var(--accent); font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 5px 12px; border-radius: 4px; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+  .copy-btn:hover { background: #1e3a5a; }
+  .copy-btn.copied { border-color: var(--green); color: var(--green); background: #071a0f; }
+  .scan-btn { width: 100%; background: #0f1e3a; border: 1.5px solid var(--border3); color: var(--accent); font-family: 'Press Start 2P', monospace; font-size: 9px; padding: 14px; border-radius: 6px; cursor: pointer; letter-spacing: 1px; transition: background 0.15s, transform 0.1s; margin-bottom: 16px; position: relative; overflow: hidden; }
+  .scan-btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%; background: linear-gradient(90deg, transparent, rgba(122,179,245,0.08), transparent); }
+  .scan-btn.running::after { animation: sweep 1.2s linear infinite; }
+  @keyframes sweep { to { left: 150%; } }
+  .scan-btn:hover:not(.running) { background: #162848; }
+  .scan-btn:active:not(.running) { transform: scale(0.99); }
+  .scan-btn.running { border-color: var(--amber); color: var(--amber); background: #1a1200; cursor: default; }
+  .scan-btn.success { border-color: var(--green); color: var(--green); background: #071a0f; }
+  .scan-btn.fail    { border-color: var(--red); color: var(--red); background: #1a0707; }
+  .prog-wrap { background: #040608; border: 1px solid var(--border); border-radius: 2px; height: 4px; margin-bottom: 14px; overflow: hidden; }
+  .prog-bar { height: 100%; width: 0%; background: var(--border3); transition: width 0.2s, background 0.3s; }
+  .prog-bar.done { background: var(--green); }
+  .log-box { background: var(--bg4); border: 1px solid #111a2a; border-radius: 6px; padding: 12px 14px; height: 180px; overflow-y: auto; font-size: 12px; line-height: 1.8; margin-bottom: 14px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+  .log-box::-webkit-scrollbar { width: 4px; }
+  .log-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .ll       { color: #2a4a6a; }
+  .ll.ok    { color: var(--green); }
+  .ll.err   { color: var(--red); }
+  .ll.warn  { color: var(--amber); }
+  .ll.found { color: var(--accent); }
+  .ll.hi    { color: var(--purple); }
+  .info-block { background: var(--bg4); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; animation: fadein 0.4s ease; }
+  @keyframes fadein { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+  .ib-label { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+  .motd-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 12px; padding: 3px 10px; border-radius: 3px; border: 1px solid var(--border); color: var(--accent); background: #0f1e36; transition: border-color 0.2s; }
+  .chip:hover { border-color: var(--border3); }
+  .err-box { background: #100608; border: 1px solid #3a1515; border-radius: 6px; padding: 12px 14px; font-size: 12px; color: var(--red); margin-bottom: 10px; display: none; line-height: 1.6; }
+  .api-badge { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px; padding: 7px; background: var(--bg4); border: 1px solid var(--border); border-radius: 5px; font-size: 11px; color: var(--muted); }
+  .api-badge span { color: var(--border3); }
+  .footer { text-align: center; font-size: 11px; color: #1e2d4a; margin-top: 14px; letter-spacing: 0.5px; }
+  html { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+</style>
 </head>
 <body>
+<div class="container">
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
 
-<div class="mesh"></div>
-
-<div class="glass-card">
-    <h1>Horizons</h1>
-    
-    <div class="status-pill">
-        <div id="dot" class="dot"></div>
-        <span id="status-text">Scanning...</span>
+  <div class="card">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-inner">
+          <div class="logo-block lb-green"></div>
+          <div class="logo-block lb-green"></div>
+          <div class="logo-block lb-wide"></div>
+        </div>
+      </div>
+      <div class="header-text">
+        <div class="server-title">HORIZONS</div>
+        <div class="server-domain">horizons.falix.dev</div>
+      </div>
+      <div class="status-pill" id="statusPill">unknown</div>
     </div>
 
-    <div class="stat-grid">
-        <div class="stat-box">
-            <span class="label">Current Port</span>
-            <span class="value" id="port">----</span>
+    <div class="body">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Status</div>
+          <div class="stat-value" id="statStatus" style="color:var(--muted)">—</div>
         </div>
-        <div class="stat-box">
-            <span class="label">Players</span>
-            <span class="value" id="players">0/0</span>
+        <div class="stat">
+          <div class="stat-label">Players</div>
+          <div class="stat-value" id="statPlayers" style="color:var(--muted)">—</div>
         </div>
+        <div class="stat">
+          <div class="stat-label">Version</div>
+          <div class="stat-value" id="statVersion" style="color:var(--muted);font-size:12px">—</div>
+        </div>
+      </div>
+
+      <div class="addr-row">
+        <span class="addr-label">IP</span>
+        <span class="addr-value" id="addrValue">horizons.falix.dev</span>
+        <button class="copy-btn" id="copyBtn" onclick="copyAddr()">COPY</button>
+      </div>
+
+      <button class="scan-btn" id="scanBtn" onclick="doScan()">&#9654; PING LIVE SERVER</button>
+
+      <div class="prog-wrap"><div class="prog-bar" id="progBar"></div></div>
+
+      <div class="log-box" id="logBox">
+        <div class="ll">[ horizons ] ready — click ping to fetch live data</div>
+        <div class="ll">[ horizons ] target &#8594; horizons.falix.dev</div>
+        <div class="ll">[ horizons ] using mcsrvstat.us (SRV-aware port lookup)</div>
+      </div>
+
+      <div class="err-box" id="errBox"></div>
+
+      <div class="info-block" id="motdBlock" style="display:none">
+        <div class="ib-label">MOTD</div>
+        <div class="motd-text" id="motdText"></div>
+      </div>
+
+      <div class="info-block" id="playersBlock" style="display:none">
+        <div class="ib-label">Players online</div>
+        <div class="chips" id="playerChips"></div>
+      </div>
+
+      <div class="info-block" id="infoBlock" style="display:none">
+        <div class="ib-label">Server info</div>
+        <div class="chips" id="infoChips"></div>
+      </div>
+
+      <div class="api-badge">using <span>mcsrvstat.us v3</span> &mdash; follows DNS SRV for real port</div>
     </div>
-
-    <div class="heads-wrap" id="heads"></div>
-
-    <button class="btn btn-main" onclick="fetchData()">Refresh Gateway</button>
-    <button class="btn btn-sec" id="copyBtn" style="display:none" onclick="copy()">Copy Connection String</button>
-    <a href="https://falixnodes.net" target="_blank" class="btn btn-start">Boot System</a>
+  </div>
+  <div class="footer">horizons.falix.dev &mdash; powered by mcsrvstat.us</div>
 </div>
 
 <script>
-    let addrStr = "";
+const HOST = 'horizons.falix.dev';
+const API  = 'https://api.mcsrvstat.us/3/' + HOST;
+let running = false;
 
-    async function fetchData() {
-        const statusText = document.getElementById('status-text');
-        const dot = document.getElementById('dot');
-        
-        try {
-            const res = await fetch('https://mcsrvstat.us');
-            const data = await res.json();
+function log(msg, cls='ll') {
+  const box = document.getElementById('logBox');
+  const d = document.createElement('div');
+  d.className = cls; d.textContent = msg;
+  box.appendChild(d); box.scrollTop = box.scrollHeight;
+}
 
-            if(data.online) {
-                addrStr = `horizons.falix.dev:${data.port}`;
-                statusText.innerText = "Active Link";
-                dot.classList.add('active');
-                document.getElementById('port').innerText = data.port;
-                document.getElementById('players').innerText = `${data.players.online}/${data.players.max}`;
-                document.getElementById('copyBtn').style.display = "block";
-                
-                const heads = document.getElementById('heads');
-                heads.innerHTML = "";
-                if(data.players.list) {
-                    data.players.list.slice(0, 5).forEach(p => {
-                        heads.innerHTML += `<img src="https://mc-heads.net{p.name}" class="head-img" title="${p.name}">`;
-                    });
-                }
-            } else {
-                statusText.innerText = "Node Offline";
-                dot.classList.remove('active');
-                document.getElementById('copyBtn').style.display = "none";
-            }
-        } catch (e) {
-            statusText.innerText = "Connection Error";
-        }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function stripColor(str) {
+  return str ? str.replace(/\u00A7[0-9a-fk-or]/gi,'').replace(/\n/g,' ').trim() : '';
+}
+
+function setProgress(pct, done=false) {
+  const bar = document.getElementById('progBar');
+  bar.style.width = pct + '%';
+  done ? bar.classList.add('done') : bar.classList.remove('done');
+}
+
+async function doScan() {
+  if (running) return;
+  running = true;
+
+  document.getElementById('logBox').innerHTML = '';
+  ['motdBlock','playersBlock','infoBlock'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById('errBox').style.display = 'none';
+  document.getElementById('playerChips').innerHTML = '';
+  document.getElementById('infoChips').innerHTML = '';
+  document.getElementById('statStatus').textContent  = '...';
+  document.getElementById('statStatus').style.color  = 'var(--amber)';
+  document.getElementById('statPlayers').textContent = '...';
+  document.getElementById('statPlayers').style.color = 'var(--muted)';
+  document.getElementById('statVersion').textContent = '...';
+  document.getElementById('statVersion').style.color = 'var(--muted)';
+  document.getElementById('addrValue').textContent   = HOST;
+  document.getElementById('addrValue').style.color   = 'var(--muted)';
+  setProgress(0);
+
+  const btn  = document.getElementById('scanBtn');
+  const pill = document.getElementById('statusPill');
+  btn.className = 'scan-btn running'; btn.textContent = 'PINGING...';
+  pill.className = 'status-pill checking'; pill.textContent = 'checking';
+
+  log('[ INIT ] Pinging ' + HOST, 'll');
+  log('[ DNS  ] Resolving SRV record for real port...', 'll');
+  setProgress(15); await sleep(200);
+  log('[ API  ] GET ' + API, 'll');
+  setProgress(35);
+
+  try {
+    const res = await fetch(API);
+    setProgress(70);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    setProgress(88); await sleep(80);
+    log('[ API  ] Response OK', 'll ok');
+
+    const online = data.online;
+    const port   = data.port ?? 25565;
+    const addr   = HOST + ':' + port;
+
+    document.getElementById('addrValue').textContent = addr;
+    document.getElementById('addrValue').style.color = 'var(--green)';
+
+    if (online) {
+      const onCount   = data.players?.online ?? 0;
+      const maxCount  = data.players?.max    ?? 20;
+      const verName   = data.version ?? '?';
+      const motdArr   = data.motd?.clean ?? data.motd?.raw ?? [];
+      const motdClean = stripColor(Array.isArray(motdArr) ? motdArr.join(' ') : String(motdArr));
+      const playerList = (data.players?.list ?? []).map(p => typeof p === 'string' ? p : (p.name ?? p.uuid ?? '?')).filter(Boolean);
+      const software  = data.software  ?? null;
+      const protocol  = data.protocol?.version ?? null;
+      const ping      = data.debug?.ping ?? null;
+
+      log('[ PORT ] Real port (via SRV): ' + port, 'll found');
+      log('[ PING ] Server ONLINE' + (ping !== null ? ' (' + ping + 'ms latency)' : ''), 'll ok');
+      log('[ INFO ] Players: ' + onCount + ' / ' + maxCount, 'll found');
+      log('[ INFO ] Version: ' + verName, 'll found');
+      if (software) log('[ INFO ] Software: ' + software, 'll');
+      if (motdClean) log('[ MOTD ] ' + motdClean, 'll hi');
+      if (playerList.length > 0) {
+        playerList.forEach(n => log('[ PLYR ] ' + n, 'll hi'));
+      } else if (onCount > 0) {
+        log('[ PLYR ] ' + onCount + ' online (names hidden by server)', 'll');
+      } else {
+        log('[ PLYR ] No players currently online', 'll');
+      }
+
+      setProgress(100, true);
+      document.getElementById('statStatus').textContent  = 'Online';
+      document.getElementById('statStatus').style.color  = 'var(--green)';
+      document.getElementById('statPlayers').textContent = onCount + ' / ' + maxCount;
+      document.getElementById('statPlayers').style.color = onCount > 0 ? 'var(--green)' : 'var(--accent)';
+      document.getElementById('statVersion').textContent = verName;
+      document.getElementById('statVersion').style.color = 'var(--accent)';
+      pill.className = 'status-pill online'; pill.textContent = 'online';
+
+      if (motdClean) {
+        document.getElementById('motdText').textContent = motdClean;
+        document.getElementById('motdBlock').style.display = 'block';
+      }
+
+      if (playerList.length > 0) {
+        const chips = document.getElementById('playerChips');
+        playerList.forEach(name => {
+          const c = document.createElement('span');
+          c.className = 'chip'; c.textContent = name;
+          chips.appendChild(c);
+        });
+        document.getElementById('playersBlock').style.display = 'block';
+      } else if (onCount > 0) {
+        document.getElementById('playerChips').innerHTML =
+          '<span style="font-size:12px;color:var(--muted)">' + onCount + ' player(s) — names not exposed by server</span>';
+        document.getElementById('playersBlock').style.display = 'block';
+      }
+
+      const items = ['Port: ' + port, 'Max: ' + maxCount];
+      if (ping !== null)     items.push('Ping: ' + ping + 'ms');
+      if (software)          items.push('Software: ' + software);
+      if (protocol !== null) items.push('Protocol: ' + protocol);
+      const ic = document.getElementById('infoChips');
+      items.forEach(txt => {
+        const c = document.createElement('span');
+        c.className = 'chip'; c.textContent = txt; ic.appendChild(c);
+      });
+      document.getElementById('infoBlock').style.display = 'block';
+
+      btn.className = 'scan-btn success'; btn.textContent = 'ONLINE \u2014 CLICK TO REFRESH';
+
+    } else {
+      setProgress(100, true);
+      log('[ PING ] Server is OFFLINE or unreachable', 'll err');
+      log('[ HELP ] Make sure your Falix server is started', 'll warn');
+      document.getElementById('statStatus').textContent = 'Offline';
+      document.getElementById('statStatus').style.color = 'var(--red)';
+      document.getElementById('statPlayers').textContent = '0';
+      document.getElementById('statVersion').textContent = '—';
+      pill.className = 'status-pill offline'; pill.textContent = 'offline';
+      btn.className = 'scan-btn fail'; btn.textContent = 'OFFLINE \u2014 CLICK TO RETRY';
     }
 
-    function copy() {
-        navigator.clipboard.writeText(addrStr);
-        alert("Address copied for TLauncher!");
-    }
+  } catch(e) {
+    setProgress(100);
+    log('[ ERR  ] ' + e.message, 'll err');
+    log('[ HELP ] Check internet connection and try again', 'll warn');
+    const eb = document.getElementById('errBox');
+    eb.textContent = 'Error: ' + e.message; eb.style.display = 'block';
+    document.getElementById('statStatus').textContent = 'Error';
+    document.getElementById('statStatus').style.color = 'var(--red)';
+    pill.className = 'status-pill offline'; pill.textContent = 'error';
+    btn.className = 'scan-btn fail'; btn.textContent = 'ERROR \u2014 CLICK TO RETRY';
+  }
 
-    // Run on load
-    fetchData();
+  running = false;
+}
+
+function copyAddr() {
+  const val = document.getElementById('addrValue').textContent;
+  const btn = document.getElementById('copyBtn');
+  navigator.clipboard.writeText(val).then(() => {
+    btn.textContent = 'COPIED!'; btn.classList.add('copied');
+    log('[ COPY ] Copied: ' + val, 'll ok');
+    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 1500);
+  }).catch(() => log('[ COPY ] Failed — address: ' + val, 'll warn'));
+}
 </script>
-
 </body>
 </html>
